@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
-import { todoListState } from 'src/study-todo/atoms/todoListState';
+import { todoListState } from 'src/study-todo/atoms/todoState';
 import { TodoListState } from 'src/study-todo/types/state';
 import {
   removeItemAtIndex,

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { todoListState } from 'src/study-todo/atoms/todoListState';
+import { todoListState } from 'src/study-todo/atoms/todoState';
 
 let id = 0;
 function getId() {
