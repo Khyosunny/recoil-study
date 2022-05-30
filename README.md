@@ -18,3 +18,7 @@
 - `Selector` 는 파생된 상태(derived state)의 일부를 나타낸다. 파생된 state는 state의 변화다. 주어진 state를 수정하는 **순수 함수**에 전달된 state의 결과물로 생각하면 된다.
 - `key` : selector를 구분할 수 있는 unique 한 key 값
 - `get` : derived state 를 return 한다.
+- `set?` : selector 는 첫 번째 매개변수로 콜백 객체와 새로운 입력 값을 전달하는 함수다.
+  - `get()` : 다른 atom 이나 selector로부터 값을 찾는데 사용되는 함수이다. 이 함수는 atom 이나 selector를 구독하지 않는다.
+  - `set()` : 업스트림 Recoil 상태의 값을 설정할 때 사용되는 함수이다. 첫 번째 매개변수는 Recoil 상태, 두 번째 매개변수는 새로운 값이다. 새로운 값은 업데이트 함수나 재설정 액션을 전파하는 DefaultValue 객체일 수 있다.
+  - `reset()` : 업스트림 Recoil 상태를 기본값으로 재설정하는데 사용되는 함수이다. 유일한 매개변수는 Recoil 상태이다.
