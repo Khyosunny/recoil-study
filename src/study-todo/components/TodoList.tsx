@@ -7,7 +7,6 @@ import TodoListStats from './TodoListStats';
 
 export default function TodoList() {
   const todoList = useRecoilValue(filteredTodoListState);
-
   return (
     <>
       <TodoListStats />

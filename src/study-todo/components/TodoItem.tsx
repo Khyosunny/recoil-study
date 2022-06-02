@@ -1,46 +1,35 @@
-import React, { useCallback, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
-import { todoListState } from 'src/study-todo/atoms/todoState';
+import React, { useCallback } from 'react';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { todoListSelectorFamily } from 'src/study-todo/atoms/todoState';
 import { TodoListState } from 'src/study-todo/types/state';
-import {
-  removeItemAtIndex,
-  replaceItemAtIndex,
-} from 'src/study-todo/util/todoUtil';
 
 interface TodoItemProps {
   item: TodoListState;
 }
 export default function TodoItem({ item }: TodoItemProps) {
-  const [todoList, setTodoList] = useRecoilState(todoListState);
-  const index = useMemo(
-    () => todoList.findIndex((listItem) => listItem === item),
-    [item, todoList]
-  );
+  const resetByItem = useResetRecoilState(todoListSelectorFamily(item.id));
+  const setByItem = useSetRecoilState(todoListSelectorFamily(item.id));
 
   const editItemText = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newList = replaceItemAtIndex<TodoListState>(todoList, index, {
+      setByItem({
         ...item,
         text: e.target.value,
       });
-      setTodoList(newList);
     },
-    [item, index, todoList, setTodoList]
+    [setByItem, item]
   );
 
   const toggleItemCompletion = useCallback(() => {
-    const newList = replaceItemAtIndex<TodoListState>(todoList, index, {
+    setByItem({
       ...item,
       isComplete: !item.isComplete,
     });
-
-    setTodoList(newList);
-  }, [item, index, todoList, setTodoList]);
+  }, [setByItem, item]);
 
   const deleteItem = useCallback(() => {
-    const newList = removeItemAtIndex<TodoListState>(todoList, index);
-    setTodoList(newList);
-  }, [index, todoList, setTodoList]);
+    resetByItem();
+  }, [resetByItem]);
 
   return (
     <div>
