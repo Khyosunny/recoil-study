@@ -16,8 +16,8 @@ export const todoItemAtomFaily = atomFamily<TodoListState, number>({
   }),
 });
 
-export const todoListState = atom<TodoListState[]>({
-  key: 'todoListState',
+export const todoIdState = atom<TodoListState['id'][]>({
+  key: 'todoIdState',
   default: [],
 });
 
@@ -32,20 +32,13 @@ export const todoListSelectorFamily = selectorFamily<TodoListState, number>({
     ({ get, set, reset }, newValue) => {
       if (newValue instanceof DefaultValue) {
         reset(todoItemAtomFaily(id));
-        set(todoListState, (prevValue) =>
-          prevValue.filter((item) => item.id !== id)
+        set(todoIdState, (prevValue) =>
+          prevValue.filter((item) => item !== id)
         );
         return;
       }
-
       set(todoItemAtomFaily(id), newValue);
-      set(todoListState, (prev) =>
-        prev.some((item) => item.id === id)
-          ? prev.map((item) =>
-              item.id === id ? { ...item, ...newValue } : { ...item }
-            )
-          : [...prev, newValue]
-      );
+      set(todoIdState, (prev) => Array.from(new Set([...prev, newValue.id])));
     },
 });
 
@@ -54,19 +47,24 @@ export const todoListFilterState = atom<string>({
   default: 'Show All',
 });
 
-export const filteredTodoListState = selector({
-  key: 'filteredTodoListState',
+export const filteredTodoIdStateState = selector({
+  key: 'filteredTodoListSelectorFamily',
   get: ({ get }) => {
     const filter = get(todoListFilterState);
-    const list = get(todoListState);
-
+    const ids = get(todoIdState);
+    const completeIds = ids.filter(
+      (item) => get(todoItemAtomFaily(item)).isComplete
+    );
+    const uncompletedIds = ids.filter(
+      (item) => !get(todoItemAtomFaily(item)).isComplete
+    );
     switch (filter) {
       case 'Show Completed':
-        return list.filter((item) => item.isComplete);
+        return completeIds;
       case 'Show Uncompleted':
-        return list.filter((item) => !item.isComplete);
+        return uncompletedIds;
       default:
-        return list;
+        return ids;
     }
   },
 });
@@ -74,9 +72,11 @@ export const filteredTodoListState = selector({
 export const todoListStatsState = selector({
   key: 'todoListStatsState',
   get: ({ get }) => {
-    const todoList = get(todoListState);
-    const totalNum = todoList.length;
-    const totalCompletedNum = todoList.filter((item) => item.isComplete).length;
+    const ids = get(filteredTodoIdStateState);
+    const totalNum = ids.length;
+    const totalCompletedNum = ids.filter(
+      (item) => get(todoItemAtomFaily(item)).isComplete
+    ).length;
     const totalUncompletedNum = totalNum - totalCompletedNum;
     const percentCompleted = totalNum === 0 ? 0 : totalCompletedNum / totalNum;
 

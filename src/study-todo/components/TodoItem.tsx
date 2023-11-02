@@ -1,31 +1,30 @@
 import React, { useCallback } from 'react';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { todoListSelectorFamily } from 'src/study-todo/atoms/todoState';
-import { TodoListState } from 'src/study-todo/types/state';
 
 interface TodoItemProps {
-  item: TodoListState;
+  id: number;
 }
-export default function TodoItem({ item }: TodoItemProps) {
-  const resetByItem = useResetRecoilState(todoListSelectorFamily(item.id));
-  const setByItem = useSetRecoilState(todoListSelectorFamily(item.id));
+
+export default function TodoItem({ id }: TodoItemProps) {
+  const resetByItem = useResetRecoilState(todoListSelectorFamily(id));
+  const [todo, setTodo] = useRecoilState(todoListSelectorFamily(id));
 
   const editItemText = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setByItem({
-        ...item,
+      setTodo((prev) => ({
+        ...prev,
         text: e.target.value,
-      });
+      }));
     },
-    [setByItem, item]
+    [setTodo]
   );
-
   const toggleItemCompletion = useCallback(() => {
-    setByItem({
-      ...item,
-      isComplete: !item.isComplete,
-    });
-  }, [setByItem, item]);
+    setTodo((prev) => ({
+      ...prev,
+      isComplete: !prev.isComplete,
+    }));
+  }, [setTodo]);
 
   const deleteItem = useCallback(() => {
     resetByItem();
@@ -33,10 +32,10 @@ export default function TodoItem({ item }: TodoItemProps) {
 
   return (
     <div>
-      <input type="text" value={item.text} onChange={editItemText} />
+      <input type="text" value={todo.text} onChange={editItemText} />
       <input
         type="checkbox"
-        checked={item.isComplete}
+        checked={todo.isComplete}
         onChange={toggleItemCompletion}
       />
       <button onClick={deleteItem}>X</button>
