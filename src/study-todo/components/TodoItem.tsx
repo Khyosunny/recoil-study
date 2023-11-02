@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useRecoilState, useResetRecoilState } from 'recoil';
 import { todoListSelectorFamily } from 'src/study-todo/atoms/todoState';
 
@@ -6,7 +6,7 @@ interface TodoItemProps {
   id: number;
 }
 
-export default function TodoItem({ id }: TodoItemProps) {
+function TodoItem({ id }: TodoItemProps) {
   const resetByItem = useResetRecoilState(todoListSelectorFamily(id));
   const [todo, setTodo] = useRecoilState(todoListSelectorFamily(id));
 
@@ -42,3 +42,4 @@ export default function TodoItem({ id }: TodoItemProps) {
     </div>
   );
 }
+export default memo(TodoItem);

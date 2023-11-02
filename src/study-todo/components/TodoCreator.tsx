@@ -2,14 +2,9 @@ import { useState, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { todoListSelectorFamily } from 'src/study-todo/atoms/todoState';
 
-let id = 0;
-function getId() {
-  return id++;
-}
-
 export default function TodoItemCreator() {
   const [inputValue, setInputValue] = useState('');
-  const newId = getId();
+  const [newId, setNewId] = useState(0);
   const setTotoItem = useSetRecoilState(todoListSelectorFamily(newId));
 
   const addItem = useCallback(() => {
@@ -18,8 +13,9 @@ export default function TodoItemCreator() {
       text: inputValue,
       isComplete: false,
     });
+    setNewId((prev) => prev + 1);
     setInputValue('');
-  }, [inputValue, setTotoItem, newId]);
+  }, [inputValue, newId, setTotoItem]);
 
   const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
